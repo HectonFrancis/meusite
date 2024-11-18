@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto: Semáforo com Arduino</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .semaforo-container {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 20px;
+        }
+
+        .semaforo {
+            width: 100px;
+            height: 300px;
+            background-color: #222;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .light {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: gray;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .red {
+            background-color: #ff0000;
+        }
+
+        .yellow {
+            background-color: #ffff00;
+        }
+
+        .green {
+            background-color: #00ff00;
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .code-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: left;
+            max-width: 800px;
+            margin: 30px auto;
+        }
+
+        pre {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Projeto Semáforo com Arduino</h1>
+    <p>Visualize como funciona o ciclo de um semáforo programado com Arduino!</p>
+
+    <div class="semaforo-container">
+        <div class="semaforo" id="semaforo1">
+            <div class="light" id="red1"></div>
+            <div class="light" id="yellow1"></div>
+            <div class="light" id="green1"></div>
+        </div>
+        <div class="semaforo" id="semaforo2">
+            <div class="light" id="red2"></div>
+            <div class="light" id="yellow2"></div>
+            <div class="light" id="green2"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="startCycle()">Iniciar Ciclo</button>
+        <button onclick="resetLights()">Reiniciar</button>
+    </div>
+
+    <div class="code-container">
+        <h2>Código Arduino</h2>
+        <pre>
+/* Definindo os pinos para os LEDs do semáforo 1 */
+int vermelho1 = 8;
+int amarelo1 = 9;
+int verde1 = 10;
+
+/* Definindo os pinos para os LEDs do semáforo 2 */
+int verde2 = 11;
+int amarelo2 = 12;
+int vermelho2 = 13;
+
+void setup() {
+    /* Configurando os pinos como saída */
+    pinMode(vermelho1, OUTPUT);
+    pinMode(amarelo1, OUTPUT);
+    pinMode(verde1, OUTPUT);
+
+    pinMode(vermelho2, OUTPUT);
+    pinMode(amarelo2, OUTPUT);
+    pinMode(verde2, OUTPUT);
+}
+
+void loop() {
+    // Fase 1: Semáforo 1 (Vermelho), Semáforo 2 (Verde)
+    digitalWrite(vermelho1, HIGH);  // Semáforo 1: Vermelho
+    digitalWrite(verde2, HIGH);     // Semáforo 2: Verde
+
+    delay(5000);                    // Espera por 5 segundos
+
+    // Fase 2: Semáforo 1 (Vermelho), Semáforo 2 (Amarelo)
+    digitalWrite(verde2, LOW);      // Desliga o verde do semáforo 2
+    digitalWrite(amarelo2, HIGH);   // Semáforo 2: Amarelo
+
+    delay(2000);                    // Espera por 2 segundos
+
+    // Fase 3: Semáforo 1 (Verde), Semáforo 2 (Vermelho)
+    digitalWrite(vermelho1, LOW);   // Desliga o vermelho do semáforo 1
+    digitalWrite(amarelo2, LOW);    // Desliga o amarelo do semáforo 2
+    digitalWrite(verde1, HIGH);     // Semáforo 1: Verde
+    digitalWrite(vermelho2, HIGH);  // Semáforo 2: Vermelho
+
+    delay(5000);                    // Espera por 5 segundos
+
+    // Fase 4: Semáforo 1 (Amarelo), Semáforo 2 (Vermelho)
+    digitalWrite(verde1, LOW);      // Desliga o verde do semáforo 1
+    digitalWrite(amarelo1, HIGH);   // Semáforo 1: Amarelo
+
+    delay(2000);                    // Espera por 2 segundos
+
+    // Reinicia o ciclo para a Fase 1
+    digitalWrite(amarelo1, LOW);    // Desliga o amarelo do semáforo 1
+    digitalWrite(vermelho1, HIGH);  // Semáforo 1: Vermelho
+    digitalWrite(vermelho2, LOW);   // Desliga o vermelho do semáforo 2
+    digitalWrite(verde2, HIGH);     // Semáforo 2: Verde
+
+    delay(5000);                    // Espera por 5 segundos antes de reiniciar o ciclo
+}
+        </pre>
+    </div>
+
+    <script>
+        let semaforo1 = {
+            red: document.getElementById('red1'),
+            yellow: document.getElementById('yellow1'),
+            green: document.getElementById('green1')
+        };
+
+        let semaforo2 = {
+            red: document.getElementById('red2'),
+            yellow: document.getElementById('yellow2'),
+            green: document.getElementById('green2')
+        };
+
+        function resetLights() {
+            Object.values(semaforo1).forEach(light => light.className = 'light');
+            Object.values(semaforo2).forEach(light => light.className = 'light');
+        }
+
+        async function startCycle() {
+            resetLights();
+            
+            // Fase 1
+            semaforo1.red.classList.add('red');
+            semaforo2.green.classList.add('green');
+            await delay(5000);
+
+            // Fase 2
+            resetLights();
+            semaforo1.red.classList.add('red');
+            semaforo2.yellow.classList.add('yellow');
+            await delay(2000);
+
+            // Fase 3
+            resetLights();
+            semaforo1.green.classList.add('green');
+            semaforo2.red.classList.add('red');
+            await delay(5000);
+
+            // Fase 4
+            resetLights();
+            semaforo1.yellow.classList.add('yellow');
+            semaforo2.red.classList.add('red');
+            await delay(2000);
+
+            // Recomeça o ciclo
+            startCycle();
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>
